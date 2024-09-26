@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Question Answering with BERT</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" />
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto mt-10">
+        <h1 class="text-4xl font-bold text-center mb-8">Ask BERT a Question</h1>
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <form id="qa-form">
+                <div class="mb-4">
+                    <label for="context" class="block text-gray-700 text-sm font-bold mb-2">Context (passage or document):</label>
+                    <textarea id="context" name="context" rows="6" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"></textarea>
+                </div>
+                <div class="mb-4">
+                    <label for="question" class="block text-gray-700 text-sm font-bold mb-2">Question:</label>
+                    <input type="text" id="question" name="question" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Get Answer</button>
+                </div>
+            </form>
+            <div id="answer-section" class="mt-6 hidden">
+                <h3 class="text-xl font-bold">Answer:</h3>
+                <p id="answer" class="text-lg text-gray-800"></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#qa-form').on('submit', function(event) {
+                event.preventDefault();
+
+                const context = $('#context').val();
+                const question = $('#question').val();
+
+                $.ajax({
+                    url: '/get_answer',
+                    type: 'POST',
+                    data: {
+                        context: context,
+                        question: question
+                    },
+                    success: function(response) {
+                        $('#answer-section').removeClass('hidden');
+                        $('#answer').text(response.answer);
+                    },
+                    error: function(error) {
+                        alert('Error: ' + error.responseJSON.error);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
